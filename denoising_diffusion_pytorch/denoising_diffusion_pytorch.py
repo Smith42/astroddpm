@@ -10,11 +10,13 @@ from torch.utils import data
 from pathlib import Path
 from torch.optim import Adam
 from torchvision import transforms, utils
-from PIL import Image
+from astropy.io import fits
 
 import numpy as np
 from tqdm import tqdm
 from einops import rearrange
+
+from time import time
 
 try:
     from apex import amp
@@ -24,12 +26,14 @@ except:
 
 # constants
 
-SAVE_AND_SAMPLE_EVERY = 1000
+SAMPLE_EVERY = 500 
+SAVE_EVERY = 1000
 UPDATE_EMA_EVERY = 10
-EXTS = ['jpg', 'jpeg', 'png']
 
-RESULTS_FOLDER = Path('./results')
+RESULTS_FOLDER = Path('./logs')
 RESULTS_FOLDER.mkdir(exist_ok = True)
+
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # helpers functions
 
@@ -183,7 +187,7 @@ class LinearAttention(nn.Module):
 class Unet(nn.Module):
     def __init__(self, dim, out_dim = None, dim_mults=(1, 2, 4, 8), groups = 8):
         super().__init__()
-        dims = [3, *map(lambda m: dim * m, dim_mults)]
+        dims = [1, *map(lambda m: dim * m, dim_mults)]
         in_out = list(zip(dims[:-1], dims[1:]))
 
         self.time_pos_emb = SinusoidalPosEmb(dim)
@@ -222,7 +226,7 @@ class Unet(nn.Module):
                 Upsample(dim_in) if not is_last else nn.Identity()
             ]))
 
-        out_dim = default(out_dim, 3)
+        out_dim = default(out_dim, 1)
         self.final_conv = nn.Sequential(
             Block(dim, dim),
             nn.Conv2d(dim, out_dim, 1)
@@ -372,7 +376,7 @@ class GaussianDiffusion(nn.Module):
 
     @torch.no_grad()
     def sample(self, image_size, batch_size = 16):
-        return self.p_sample_loop((batch_size, 3, image_size, image_size))
+        return self.p_sample_loop((batch_size, 1, image_size, image_size))
 
     @torch.no_grad()
     def interpolate(self, x1, x2, t = None, lam = 0.5):
@@ -426,22 +430,28 @@ class Dataset(data.Dataset):
         super().__init__()
         self.folder = folder
         self.image_size = image_size
-        self.paths = [p for ext in EXTS for p in Path(f'{folder}').glob(f'**/*.{ext}')]
+        self.paths = list(Path(f'{folder}').glob(f'**/*.fits'))
 
-        self.transform = transforms.Compose([
-            transforms.Resize(image_size),
-            transforms.RandomHorizontalFlip(),
-            transforms.CenterCrop(image_size),
-            transforms.ToTensor()
-        ])
+        #self.transform = transforms.Compose([
+        #    transforms.Resize(image_size),
+        #    transforms.RandomHorizontalFlip(),
+        #    transforms.CenterCrop(image_size),
+        #    transforms.ToTensor()
+        #])
 
     def __len__(self):
         return len(self.paths)
 
     def __getitem__(self, index):
         path = self.paths[index]
-        img = Image.open(path)
-        return self.transform(img)
+        img = torch.Tensor(fits.open(path)[0].data.astype(np.float32))
+        h, w = img.shape
+        img = img[np.newaxis, 
+                  h//2 - self.image_size//2:h//2 + self.image_size//2, 
+                  w//2 - self.image_size//2:w//2 + self.image_size//2]
+        img = torch.where(img > torch.quantile(img, 0.99), torch.quantile(img, 0.99), img)
+        img = (img - img.min())/(img.max() - img.min())
+        return img
 
 # trainer class
 
@@ -472,7 +482,7 @@ class Trainer(object):
         self.train_num_steps = train_num_steps
 
         self.ds = Dataset(folder, image_size)
-        self.dl = cycle(data.DataLoader(self.ds, batch_size = train_batch_size, shuffle=True, pin_memory=True))
+        self.dl = cycle(data.DataLoader(self.ds, batch_size = train_batch_size, shuffle=True, num_workers=16))#, pin_memory=True))
         self.opt = Adam(diffusion_model.parameters(), lr=train_lr)
 
         self.step = 0
@@ -500,10 +510,10 @@ class Trainer(object):
             'model': self.model.state_dict(),
             'ema': self.ema_model.state_dict()
         }
-        torch.save(data, str(RESULTS_FOLDER / f'model-{milestone}.pt'))
+        torch.save(data, str(RESULTS_FOLDER / f'{milestone:06d}-model.tar'))
 
     def load(self, milestone):
-        data = torch.load(str(RESULTS_FOLDER / f'model-{milestone}.pt'))
+        data = torch.load(str(RESULTS_FOLDER / f'{milestone:06d}-model.tar'))
 
         self.step = data['step']
         self.model.load_state_dict(data['model'])
@@ -514,7 +524,10 @@ class Trainer(object):
 
         while self.step < self.train_num_steps:
             for i in range(self.gradient_accumulate_every):
-                data = next(self.dl).cuda()
+                data = next(self.dl).to(device=DEVICE)
+                while torch.any(~torch.isfinite(data)):
+                    print("NAN DETECTED!!")
+                    data = next(self.dl).to(device=DEVICE)
                 loss = self.model(data)
                 print(f'{self.step}: {loss.item()}')
                 backwards(loss / self.gradient_accumulate_every, self.opt)
@@ -525,13 +538,14 @@ class Trainer(object):
             if self.step % UPDATE_EMA_EVERY == 0:
                 self.step_ema()
 
-            if self.step != 0 and self.step % SAVE_AND_SAMPLE_EVERY == 0:
-                milestone = self.step // SAVE_AND_SAMPLE_EVERY
+            if self.step != 0 and self.step % SAMPLE_EVERY == 0:
                 batches = num_to_groups(36, self.batch_size)
                 all_images_list = list(map(lambda n: self.ema_model.sample(self.image_size, batch_size=n), batches))
                 all_images = torch.cat(all_images_list, dim=0)
-                utils.save_image(all_images, str(RESULTS_FOLDER / f'sample-{milestone}.png'), nrow=6)
-                self.save(milestone)
+                utils.save_image(all_images, str(RESULTS_FOLDER / f'{self.step:06d}-sample.png'), nrow=6)
+
+            if self.step != 0 and self.step % SAVE_EVERY == 0:
+                self.save(self.step)
 
             self.step += 1
 
