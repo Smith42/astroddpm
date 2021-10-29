@@ -1,6 +1,6 @@
 # Realistic galaxy simulation via score-based generative models
 
-<img src="./figures/model.png" width="500px"></img>
+<img src="./figs/ddpm.png" width="500px"></img>
 
 Official code for ``Realistic galaxy simulation via score-based generative
 models''.  We use a score-based generative model to produce realistic galaxy
@@ -10,7 +10,7 @@ version</a> which is in turn transcribed from Johnathan Ho's official
 Tensorflow version <a
 href="https://github.com/hojonathanho/diffusion">here</a>. 
 
-<img src="./figures/galaxies.png" width="500px"><img>
+<img src="./figs/shuffled_letters.png" width="500px"><img>
 
 If you find this work useful please consider citing our paper:
 
