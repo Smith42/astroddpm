@@ -19,7 +19,8 @@ are generated. Check out the paper for the answer key.
     <img src="./figs/shuffled_letters.png" width="80%"><img>
 </p>
 
-The full code will be released once the review process is concluded.
+The full code and trained models will be released once the review process is
+concluded.
 
 ## Citing
 
@@ -56,3 +57,17 @@ And Jascha Sohl-Dickstein's original DDPM paper:
     eprint = {1503.03585}
 }
 ```
+
+## Contributing
+
+AstroDDPM is free software: you can redistribute it and/or modify it under the
+terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+AstroDDPM is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with AstroDDPM. If not, see https://www.gnu.org/licenses/.
