@@ -22,6 +22,13 @@ are generated. Check out the paper for the answer key.
 The full code and trained models will be released once the review process is
 concluded.
 
+## This Galaxy/APOD Does Not Exist
+
+More galaxies can be found <a href="http://mjjsmith.com/thisgalaxydoesnotexist">here</a>.
+
+We also used a DDPM to generate fake <a href="https://apod.nasa.gov/">Astronomy Picture Of the Day imagery.</a> 
+<a href="http://mjjsmith.com/thisapoddoesnotexist">Check it out.</a>
+
 ## Citing
 
 If you find this work useful please consider citing our paper:
