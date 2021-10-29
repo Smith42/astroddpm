@@ -26,7 +26,8 @@ concluded.
 
 More galaxies can be found <a href="http://mjjsmith.com/thisgalaxydoesnotexist">here</a>.
 
-We also used a DDPM to generate fake <a href="https://apod.nasa.gov/">Astronomy Picture Of the Day imagery.</a> 
+We also used a DDPM to generate fake <a href="https://apod.nasa.gov/">Astronomy
+Picture Of the Day</a> imagery.
 <a href="http://mjjsmith.com/thisapoddoesnotexist">Check it out.</a>
 
 ## Citing
