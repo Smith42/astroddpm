@@ -24,11 +24,11 @@ concluded.
 
 ## This Galaxy/APOD Does Not Exist
 
-More galaxies can be found <a href="http://mjjsmith.com/thisgalaxydoesnotexist">here</a>.
+More galaxies can be found <a href="http://mjjsmith.com/thisisnotagalaxy">here</a>.
 
 We also used a DDPM to generate fake <a href="https://apod.nasa.gov/">Astronomy
 Picture Of the Day</a> imagery.
-<a href="http://mjjsmith.com/thisapoddoesnotexist">Check it out.</a>
+<a href="http://mjjsmith.com/thisisnotanapod">Check it out.</a>
 
 ## Citing
 
