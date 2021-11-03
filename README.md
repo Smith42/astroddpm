@@ -38,7 +38,9 @@ If you find this work useful please consider citing our paper:
 @article{smith2021,
     title={Realistic galaxy image simulation via score-based generative models},
     author={Michael J. Smith and James E. Geach and Ryan A. Jackson and Nikhil Arora and Connor Stone and St{\'{e}}ephane Courteau},
-    year={2021}
+    journal = {arXiv e-prints},
+    year={2021},
+    eprint = {2111.01713}
 }
 ```
 
