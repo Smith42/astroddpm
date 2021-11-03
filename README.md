@@ -19,8 +19,10 @@ are generated. Check out the paper for the answer key.
     <img src="./figs/shuffled_letters.png" width="80%"><img>
 </p>
 
-The full code and trained models will be released once the review process is
-concluded.
+## Running the code
+
+I will be adding full instructions to train and infer with this code within the next
+couple of days.
 
 ## This Galaxy/APOD Does Not Exist
 
