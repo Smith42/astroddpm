@@ -23,16 +23,16 @@ are generated. Check out the paper for the answer key.
 
 Downloading the PROBES dataset is straightforward:
 
-    1. `cd data/probes/ && mkdir raws gals`
-    2. `bash get_probes.sh`
-    3. `python preprocess.py`
+1. `cd data/probes/ && mkdir raws gals`
+2. `bash get_probes.sh`
+3. `python preprocess.py`
 
 Downloading the SDSS dataset is a little more finicky since it is so large. Here we
 speed up the process via GNU Parallel (so make sure it is installed!):
 
-    1. `cd data/sdss/ && mkdir raws gals`
-    2. `bash wrangle_csv.bash`
-    3. `python preprocess.py`
+1. `cd data/sdss/ && mkdir raws gals`
+2. `bash wrangle_csv.bash`
+3. `python preprocess.py`
 
 ## Running the code
 
