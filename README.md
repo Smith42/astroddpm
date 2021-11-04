@@ -36,8 +36,25 @@ speed up the process via GNU Parallel (so make sure it is installed!):
 
 ## Running the code
 
-I will be adding full instructions to train and infer with this code within the next
-couple of days.
+### Training
+
+Once your datasets are downloaded you can train by running:
+
+`python train.py --dataset $DATASET --milestone $MILESTONE`
+
+where `$DATASET` is either probes or sdss, and `$MILESTONE` is the global step of 
+a trained model that you want to continue from. If there is no previous training
+run, it is set as 0.
+
+### Inference
+
+To run inference on your trained model you can do:
+
+`python infer.py --dataset $DATASET --milestone $MILESTONE --batches $BATCHES`
+
+where `$DATASET` is either probes or sdss, and `$MILESTONE` is the global step of 
+a trained model that you want to infer from. `$BATCHES` is the number of batches we
+want to process (batch size is set as 96 here but can be changed within `infer.py`).
 
 ## This Galaxy/APOD Does Not Exist
 
