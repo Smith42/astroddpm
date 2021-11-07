@@ -13,7 +13,8 @@ Tensorflow version <a
 href="https://github.com/hojonathanho/diffusion">here</a>. 
 
 Below are some outputs from our model. Half of these galaxies are real and half
-are generated. Check out the paper for the answer key.
+are generated. Check out <a href="https://arxiv.org/abs/2111.01713v1">the paper</a> 
+for the answer key.
 
 <p align="center">
     <img src="./figs/shuffled_letters.png" width="80%"><img>
