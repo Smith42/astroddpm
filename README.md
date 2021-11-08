@@ -57,6 +57,14 @@ where `$DATASET` is either probes or sdss, and `$MILESTONE` is the global step o
 a trained model that you want to infer from. `$BATCHES` is the number of batches we
 want to process (batch size is set as 96 here but can be changed within `infer.py`).
 
+## Pretrained models
+
+You can find the pretrained models that we have used in the paper on Zenodo:
+
+<a href="https://doi.org/10.5281/zenodo.5653517"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.5653517.svg" alt="DOI"></a>
+
+Copy them to your logdir, and run inference/continue training as shown above.
+
 ## This Galaxy/APOD Does Not Exist
 
 More galaxies can be found <a href="http://mjjsmith.com/thisisnotagalaxy">here</a>.
