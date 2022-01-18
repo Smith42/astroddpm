@@ -601,7 +601,7 @@ class Trainer(object):
                 t1 = time()
                 with open(str(self.logdir / 'loss.txt'), 'a') as df:
                     df.write(f'{self.step},{loss.item()}\n')
-                loss.backward(loss / self.gradient_accumulate_every, self.opt)
+                (loss / self.gradient_accumulate_every).backward()
 
             self.opt.step()
             self.opt.zero_grad()
