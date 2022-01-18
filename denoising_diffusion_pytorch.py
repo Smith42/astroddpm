@@ -46,13 +46,6 @@ def num_to_groups(num, divisor):
         arr.append(remainder)
     return arr
 
-def loss_backwards(fp16, loss, optimizer, **kwargs):
-    if fp16:
-        with amp.scale_loss(loss, optimizer) as scaled_loss:
-            scaled_loss.backward(**kwargs)
-    else:
-        loss.backward(**kwargs)
-
 class EMA():
     def __init__(self, beta):
         super().__init__()
@@ -594,7 +587,6 @@ class Trainer(object):
         self.ema_model.load_state_dict(data['ema'])
 
     def train(self):
-        backwards = partial(loss_backwards)
 
         t1 = time()
         while self.step < self.train_num_steps:
@@ -609,7 +601,7 @@ class Trainer(object):
                 t1 = time()
                 with open(str(self.logdir / 'loss.txt'), 'a') as df:
                     df.write(f'{self.step},{loss.item()}\n')
-                backwards(loss / self.gradient_accumulate_every, self.opt)
+                loss.backward(loss / self.gradient_accumulate_every, self.opt)
 
             self.opt.step()
             self.opt.zero_grad()
