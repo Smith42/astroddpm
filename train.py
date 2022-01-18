@@ -1,5 +1,6 @@
 import argparse
 from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
+import torch
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -17,7 +18,7 @@ diffusion = GaussianDiffusion(
 
 parser = argparse.ArgumentParser("")
 parser.add_argument('--dataset', default='probes', choices=['probes', 'sdss'], help='Which dataset?')
-parser.add_argument('--milestone', default=0, dest=milestone, type=int, help='start at this number')
+parser.add_argument('--milestone', default=0, dest='milestone', type=int, help='start at this number')
 args = parser.parse_args()
 
 if args.dataset == 'probes':
